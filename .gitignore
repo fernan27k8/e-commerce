@@ -1,0 +1,2 @@
+# Ignorar node_modules en back/lambdaProductos/
+/back/lambdaProductos/node_modules/

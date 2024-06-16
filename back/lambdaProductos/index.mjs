@@ -1,3 +1,5 @@
+import { apigtwAdapter } from "./src/adapters/primary/apigtw_event.mjs";
+
 const getStage = (context) => {
     console.log("handler::context", context);
     const invokedFunctionArn = context.invokedFunctionArn || "";
