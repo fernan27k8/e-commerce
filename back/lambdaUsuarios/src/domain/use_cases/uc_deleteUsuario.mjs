@@ -1,5 +1,6 @@
-export const deleteUsuarioUC = async(idusuario,stage,token) =>{
+import {deleteUsuarioRepository} from "../repositories/deleteUsuario.mjs";
+export const deleteUsuarioUC = async(idUsuario,stage,token) =>{
     let response = {};
-    response = deleteUsuarioRepository(idusuario,stage);
+    response = deleteUsuarioRepository(idUsuario,stage);
     return response;
 }

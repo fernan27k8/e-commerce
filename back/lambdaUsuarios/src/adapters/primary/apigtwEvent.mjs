@@ -1,3 +1,8 @@
+import { getUsuarioUC } from "../../domain/use_cases/uc_getUsuario.mjs";
+import { addUsuarioUC } from "../../domain/use_cases/uc_addUsuario.mjs";
+import { updateUsuarioUC } from "../../domain/use_cases/uc_updateUsuario.mjs";
+import { deleteUsuarioUC } from "../../domain/use_cases/uc_deleteUsuario.mjs";
+
 export const apigtwAdapter = async (apigtwEvent, stage) =>{
 
     const headers = apigtwEvent["headers"];

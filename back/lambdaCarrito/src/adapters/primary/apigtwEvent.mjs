@@ -1,3 +1,7 @@
+import { getCarritoUC } from "../../domain/use_cases/uc_getCArrito.mjs";
+import { addCarritoUC } from "../../domain/use_cases/uc_addCarrito.mjs";
+import { updateCarritoUC } from "../../domain/use_cases/uc_updateCarrito.mjs";
+import { deleteCarritoUC } from "../../domain/use_cases/uc_deleteCarrito.mjs";
 export const apigtwAdapter = async (apigtwEvent, stage) =>{
 
     const headers = apigtwEvent["headers"];
@@ -18,9 +22,9 @@ export const apigtwAdapter = async (apigtwEvent, stage) =>{
                 const pathParams = apigtwEvent["pathParameters"];
                 console.log("handleApigtwEvent::pathParams",pathParams);
                 const id_carrito = pathParams["id_carrito"];
-                console. log("handleApigtwEvent::idCarrito",id_usuario);
+                console. log("handleApigtwEvent::idCarrito",id_carrito);
                 if (id_carrito!= ""|| id_carrito != undefined){
-                    response = await getProductUC(id_carrito,stage,xMytoken);
+                    response = await getCarritoUC(id_carrito,stage,xMytoken);
                 }
             }
             break;
@@ -52,7 +56,7 @@ export const apigtwAdapter = async (apigtwEvent, stage) =>{
             if (resource === '/carrito/{id_carrito}') {
                 const pathParams = apigtwEvent.pathParameters;
                 console.log("handleApigtwEvent::pathParams", pathParams);
-                const id_carrito = pathParams["id_usuario"];
+                const id_carrito = pathParams["id_carrito"];
                 console.log("handleApigtwEvent::id_carrito", id_carrito);
 
                 if (id_carrito) {
