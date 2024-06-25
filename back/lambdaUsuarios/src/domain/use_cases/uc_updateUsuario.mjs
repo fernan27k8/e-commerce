@@ -1,7 +1,7 @@
 import {updateUsuarioRepository} from "../repositories/updateUsuario.mjs";
-export const updateUsuarioUC = async(idUsuario,body,stage,token) =>{
+export const updateUsuarioUC = async(usuario,stage,token) =>{
     let response = {};
-    const usuario = updateUsuarioRepository(idUsuario,body,stage);
-    response = usuario;
+    const users = updateUsuarioRepository(usuario,stage);
+    response = users;
     return response;
 }

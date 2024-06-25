@@ -1,5 +1,7 @@
-export const updateUsuarioRepository = async(idUsuario,body,stage) =>{
+import { putUser } from "../../adapters/secondary/dynamodb.mjs";
+
+export const updateUsuarioRepository = async(usuario,stage) =>{
     let response = {};
-    response = await updateUsuario(idUsuario,body,stage);
+    response = await putUser(usuario,stage);
     return response;
 }
