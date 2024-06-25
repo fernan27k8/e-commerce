@@ -1,7 +1,6 @@
 import { getUsuarioUC } from "../../domain/use_cases/uc_getUsuario.mjs";
 import { addUsuarioUC } from "../../domain/use_cases/uc_addUsuario.mjs";
 import { updateUsuarioUC } from "../../domain/use_cases/uc_updateUsuario.mjs";
-import { deleteUsuarioUC } from "../../domain/use_cases/uc_deleteUsuario.mjs";
 
 export const apigtwAdapter = async (apigtwEvent, stage) =>{
 
@@ -52,19 +51,6 @@ export const apigtwAdapter = async (apigtwEvent, stage) =>{
                 }
             }
             break;
-        
-        case "DELETE":
-            if (resource === '/usuario/{id_usuario}') {
-                const pathParams = apigtwEvent.pathParameters;
-                console.log("handleApigtwEvent::pathParams", pathParams);
-                const id_usuario = pathParams["id_usuario"];
-                console.log("handleApigtwEvent::id_usuario", id_usuario);
-
-                if (id_usuario) {
-                    response = await deleteUsuarioUC(id_usuario, stage, xMytoken);
-                }
-            }
-            break; 
     }
     return response;
 }
