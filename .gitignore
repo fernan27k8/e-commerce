@@ -1,2 +1,14 @@
 # Ignorar node_modules en back/lambdaProductos/
 /back/lambdaProductos/node_modules/
+
+# Ignorar node_modules en back/lambdaCompras/
+/back/lambdaCompra/node_modules/
+
+# Ignorar node_modules en back/lambdaCompras/
+/back/lambdaUsuarios/node_modules/
+
+# Ignorar node_modules en back/lambdaCompras/
+/back/lambdaSesion/node_modules/
+
+# Ignorar node_modules en back/lambdaCompras/
+/back/lambdaCarrito/node_modules/

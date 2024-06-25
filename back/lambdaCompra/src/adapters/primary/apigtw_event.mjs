@@ -15,7 +15,7 @@ export const apigtwAdapter = async (apigtwEvent, stage)  => {
     switch(httpMethod){
         case "GET":
             //Conocer el estatus de la compra
-            if(resource == '/compras/{id_compra}'){
+            if(resource == '/compra/{idCompra}'){
                 console.log("Detalles de venta");
                 const pathParams = apigtwEvent["pathParameters"];
                 console.log("handleApigtwEvent::pathParams", pathParams);
@@ -28,7 +28,7 @@ export const apigtwAdapter = async (apigtwEvent, stage)  => {
                 }
             }
             //ver historial de compras de un usuario
-            else if(resource == '/compras'){
+            else if(resource == '/compra'){
                 console.log("Historial de compras");
                 const body = apigtwEvent["body"]
                 console.log("handlerApigtwEvent::Body", body);
@@ -37,7 +37,7 @@ export const apigtwAdapter = async (apigtwEvent, stage)  => {
             break;
         case "POST":
             //confirmar una compra
-            if(resource == '/compras'){
+            if(resource == '/compra'){
                 console.log("Confirmar compra");
                 const body = apigtwEvent["body"]
                 console.log("handlerApigtwEvent::Body", body);

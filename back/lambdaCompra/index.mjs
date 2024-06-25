@@ -1,4 +1,4 @@
-import { apigtwAdapter } from "./adapters/primary/apigtw_event.mjs";
+import { apigtwAdapter } from "./src/adapters/primary/apigtw_event.mjs";
 
 const getStage = (context) => {
     console.log("handler::context", context);
@@ -16,7 +16,7 @@ export const handler = async (event, context) => {
     try {
         console.log("handler::event", event);
 
-        if (event.httpMethod) {
+        if (event["httpMethod"]) {
             console.log("Index Stage: ",stage);
             responseEvent = await apigtwAdapter(event, stage);
         } else{
