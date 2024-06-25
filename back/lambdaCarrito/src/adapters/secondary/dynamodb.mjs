@@ -12,7 +12,7 @@ export const getCart = async (carrito, stage) => {
         sk: "CAR#" + carrito.cartId + "#PRODUCT"
       },
     };
-  
+
     try {
       const response = await docClient.get(params);
       const cartItems = response.Item ? response.Item.products : [];
