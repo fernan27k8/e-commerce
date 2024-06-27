@@ -1,7 +1,6 @@
 import { apigtwAdapter } from "./src/adapters/primary/apigtw_event.mjs";
 
 const getStage = (context) => {
-    console.log("handler::context", context);
     const invokedFunctionArn = context.invokedFunctionArn || "";
     const stage = invokedFunctionArn.split(":")[7] || "unknown";
     console.log("handler::stage", stage);
@@ -11,13 +10,13 @@ const getStage = (context) => {
 // Define el handler
 export const handler = async (event, context) => {
     let responseEvent = {};
+    console.log("handler::event", event);
+    console.log("handler::context", context);
     const stage = getStage(context);
 
     try {
-        console.log("handler::event", event);
-
+        
         if (event["httpMethod"]) {
-            console.log("Index Stage: ",stage);
             responseEvent = await apigtwAdapter(event, stage);
         } else{
             responseEvent = { message: "Evento no reconocido" };

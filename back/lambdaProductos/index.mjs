@@ -16,7 +16,7 @@ export const handler = async (event, context) => {
     try {
         console.log("handler::event", event);
 
-        if (event.httpMethod) {
+        if (event["httpMethod"]) {
             console.log("Index Stage: ",stage);
             responseEvent = await apigtwAdapter(event, stage);
         } else{
