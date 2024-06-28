@@ -49,7 +49,7 @@ export const getCompra = async (stage, id_compra, body) => {
 
         // Construir las claves de consulta según tu estructura
         const pk = `USER#${id_usuario}`;
-        const sk = `CAR#${id_carrito}#BUY#${id_compra}`;
+        const sk = `CAR#${id_carrito}`;
 
         const command = new GetCommand({
             TableName: `${stage}_e-commerce_table`, // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
