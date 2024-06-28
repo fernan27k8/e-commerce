@@ -1,5 +1,5 @@
-export const addCarritoRepository = async(carrito,stage) =>{
+export const addCarritoRepository = async(body,stage) =>{
     let response = {};
-    response = await addCarrito(carrito,stage);
+    response = await addCarrito(body,stage);
     return response;
 }

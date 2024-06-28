@@ -1,5 +1,6 @@
-export const getCarritoRepository = async(idCarrito,stage) =>{
+import { getCart } from "../../adapters/secondary/dynamodb.mjs";
+export const getCarritoRepository = async(idCarrito,body,stage) =>{
     let response = {};
-    response = await getCarrito(idCarrito,stage);
+    response = await getCart(idCarrito,body,stage);
     return response;
 }

@@ -1,51 +1,53 @@
-import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient} from "@aws-sdk/lib-dynamodb"
+import {DynamoDBClient, QueryCommand} from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand} from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
-export const getCart = async (carrito, stage) => {
-    const params = {
+export const getCart = async (idCarrito,body, stage) => {
+    const data = JSON.parse(body);
+    const idUsuario = data.idUsuario;
+
+    //const pk =`USER#${idUsuario}`
+    //const sk = `CAR#${idCarrito}`
+    const command = new GetCommand({
       TableName: stage + "_e-commerce_table",
       Key: {
-        pk: "USER#" + carrito.userId, 
-        sk: "CAR#" + carrito.cartId + "#PRODUCT"
+        
+        PK: "USER#" + idUsuario, 
+        SK: "CAR#" + idCarrito
       },
-    };
-//
-    try {
-      const response = await docClient.get(params);
-      const cartItems = response.Item ? response.Item.products : [];
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ cartItems }), 
-      };
-    } catch (error) {
-      console.error(error);
-      return {
-        statusCode: error.statusCode || 500,
-        body: JSON.stringify({ error: error.message || "Error fetching cart items" }),
-      };
-    }
+      ConsistentRead : true,
+    });
+    const response = await docClient.send(command);
+    console.log("getCompra response:", response);
+    if (response.Item) {
+      return response.Item;
+  } else {
+      return "Carrito no encontrado";
+  }
   };
-
-  export const addCart = async (carrito, producto, stage) => {
-    //const { stage, userId, cartId } = event.pathParameters; // Extract parameters from path
-    //const productData = JSON.parse(event.body); // Parse product data from request body
-    //const { productId, quantity } = productData; // Extract product ID and quantity
   
-    const params = {
+
+  export const addCart = async (body, stage) => {
+    const data = JSON.parse(body);
+    const idCarrito = data.idCarrito;
+    const idUsuario = data.idUsuario;
+    const idProducto = data.idProducto;
+    const amount = data.amount;
+    const price = data.price*amount;
+    const command = new PutCommand({
       TableName: stage + "_e-commerce_table",
       Item: {
-        pk: "USER#" + carrito.userId,
-        sk: "CAR#" + carrito.cartId + "#PRODUCT#" + producto.productId, 
-        productId: producto.productId, 
-        quantity: quantity,
+        PK: "USER#" + idUsuario,
+        SK: "CAR#" + idCarrito + "#PRODUCT#" + idProducto,  
+        amount: amount,
+        price: price,
       },
-    };
+    });
   
     try {
-      await docClient.put(params); 
+      await docClient.send(command); 
       return {
         statusCode: 200,
         body: JSON.stringify({ message: "Producto agregado al carrito exitosamente" }), 
@@ -59,24 +61,31 @@ export const getCart = async (carrito, stage) => {
     }
   };
 
-  export const updateCartProductQuantity = async (carrito,amount,stage) => {  
-    const params = {
+  export const updateCart = async (idCarrito,body,stage) => {  
+    const data = JSON.parse(body);
+    const idUsuario = data.idUsuario;
+    const idProducto = data.idProducto;
+    const amount = data.amount;
+    const price = data.price*amount;
+    const command = new UpdateCommand({
       TableName: stage + "_e-commerce_table",
       Key: {
-        pk: "USER#" + carrito.userId, 
-        sk: "CAR#" + carrito.cartId + "#PRODUCT#" + carrito.productId, 
+        PK: "USER#" + idUsuario, 
+        SK: "CAR#" + idCarrito + "#PRODUCT#" + idProducto, 
       },
-      UpdateExpression: "SET #amount = :amount", 
+      UpdateExpression: "SET #amount = :amount, #price = :price", 
       ExpressionAttributeNames: {
         "#amount": "amount",
+        "#price": "price"
       },
       ExpressionAttributeValues: {
         ":amount": amount,
+        ":price": price || date.price * amount,
       },
-    };
+    });
   
     try {
-      await docClient.update(params); 
+      await docClient.send(command); 
       return {
         statusCode: 200,
         body: JSON.stringify({ message: "Cantidad de producto actualizada exitosamente" }), 

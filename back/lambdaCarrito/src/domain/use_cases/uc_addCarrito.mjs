@@ -1,6 +1,6 @@
 import { addCarritoRepository } from "../repositories/addCarrito.mjs";
-export const addCarritoUC = async(carrito,stage,token) =>{
+export const addCarritoUC = async(body,stage,token) =>{
     let response = {};
-    response = addCarritoRepository(carrito,stage);
+    response = addCarritoRepository(body,stage);
     return response;
 }
