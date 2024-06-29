@@ -1,7 +1,6 @@
 import { getCarritoUC } from "../../domain/use_cases/uc_getCarrito.mjs";
 import { addCarritoUC } from "../../domain/use_cases/uc_addCarrito.mjs";
 import { updateCarritoUC } from "../../domain/use_cases/uc_updateCarrito.mjs";
-import { deleteCarritoUC } from "../../domain/use_cases/uc_deleteCarrito.mjs";
 
 export const apigtwAdapter = async (apigtwEvent, stage) =>{
 
@@ -22,19 +21,27 @@ export const apigtwAdapter = async (apigtwEvent, stage) =>{
             if (resource == '/carrito/{id_carrito}'){
                 const pathParams = apigtwEvent["pathParameters"];
                 console.log("handleApigtwEvent::pathParams",pathParams);
-                const id_carrito = pathParams["id_carrito"];
-                console. log("handleApigtwEvent::idCarrito",id_carrito);
-                if (id_carrito!= ""|| id_carrito != undefined){
-                    response = await getCarritoUC(id_carrito,stage,xMytoken);
+                const body = apigtwEvent["body"]
+                console.log("handleApigtwEvent::body",body);
+                const idCarrito = pathParams["id_carrito"];
+                console. log("handleApigtwEvent::idCarrito",idCarrito);
+                if (idCarrito!= ""|| idCarrito != undefined){
+                    response = await getCarritoUC(idCarrito,body,stage,xMytoken);
                 }
             }
             break;
         
         case "POST":
-            if(resource == '/carrito'){
-                const body = apigtwEvent["body"]
-                console.log("handleApigtwEvent::body",body);
-                response = await addCarritoUC(body,stage,xMytoken);
+            if(resource == '/carrito/{id_carrito}'){
+                const pathParams = apigtwEvent.pathParameters;
+                console.log("handleApigtwEvent::pathParams", pathParams);
+                const idCarrito = pathParams["id_carrito"];
+                console.log("handleApigtwEvent::idCarrito", idCarrito);
+                if (idCarrito) {
+                    const body = apigtwEvent["body"];
+                    console.log("handleApigtwEvent::body", body);
+                    response = await addCarritoUC(idCarrito,body,stage,xMytoken);
+                }
             }
             break;
             
@@ -42,29 +49,16 @@ export const apigtwAdapter = async (apigtwEvent, stage) =>{
             if(resource == '/carrito/{id_carrito}'){
                 const pathParams = apigtwEvent.pathParameters;
                 console.log("handleApigtwEvent::pathParams", pathParams);
-                const id_carrito = pathParams["id_carrito"];
-                console.log("handleApigtwEvent::id_carrito", id_carrito);
+                const idCarrito = pathParams["id_carrito"];
+                console.log("handleApigtwEvent::idCarrito", idCarrito);
 
-                if (id_carrito) {
+                if (idCarrito) {
                     const body = apigtwEvent["body"];
                     console.log("handleApigtwEvent::body", body);
-                    response = await updateCarritoUC(id_carrito, body, stage, xMytoken);
+                    response = await updateCarritoUC(idCarrito, body, stage, xMytoken);
                 }
             }
             break;
-        
-        case "DELETE":
-            if (resource === '/carrito/{id_carrito}') {
-                const pathParams = apigtwEvent.pathParameters;
-                console.log("handleApigtwEvent::pathParams", pathParams);
-                const id_carrito = pathParams["id_carrito"];
-                console.log("handleApigtwEvent::id_carrito", id_carrito);
-
-                if (id_carrito) {
-                    response = await deleteCarritoUC(id_carrito, stage, xMytoken);
-                }
-            }
-            break; 
     }
     return response;
 }

@@ -6,6 +6,8 @@ export const handler = async (event, context) => {
     console.log("validateEvent::event",event);
     if(event["httpMethod"]){
       responseEvent = await apigtwAdapter(event, stage);
+    }else{
+      responseEvent = "Evento no reconocido";
     }
   
     const response ={
