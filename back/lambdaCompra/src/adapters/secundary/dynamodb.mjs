@@ -9,11 +9,10 @@ export const listCompras = async (stage, body) => {
         // Parsear el JSON del cuerpo de la solicitud
         const data = JSON.parse(body);
         const id_usuario = data.id_usuario;
-        const id_carrito = data.id_carrito;
 
         // Construir las claves de consulta
         const pk = `USER#${id_usuario}`;
-        const skPrefix = `CAR#${id_carrito}#BUY`;
+        const skPrefix = `BUY#`;
 
         const command = new QueryCommand({
             TableName: stage + `_e-commerce_table`, // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
