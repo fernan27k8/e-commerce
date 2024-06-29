@@ -1,5 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import {QueryCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import {QueryCommand, DynamoDBDocumentClient, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -49,13 +49,13 @@ export const getCompra = async (stage, id_compra, body) => {
 
         // Construir las claves de consulta según tu estructura
         const pk = `USER#${id_usuario}`;
-        const sk = `CAR#${id_carrito}`;
+        const sk = `CAR#${id_carrito}#BUY`;
 
         const command = new GetCommand({
             TableName: `${stage}_e-commerce_table`, // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
             Key: {
-                pk: pk,
-                sk: sk,
+                PK: pk,
+                SK: sk,
             },
         });
 
@@ -77,28 +77,26 @@ export const addCompra = async (stage, body) => {
     try {
         // Parsear el JSON del cuerpo de la solicitud
         const data = JSON.parse(body);
-        const id_usuario = data.id_usuario;
-        const id_carrito = data.id_carrito;
-        const id_compra = data.id_compra;
+        const id_usuario = data.user_id;
+        const id_carrito = data.car_id;
+        const id_compra = data.buy_id;
 
         // Construir la clave de partición (pk) y de ordenación (sk)
-        const pk = `usuario#${id_usuario}#carrito#${id_carrito}`;
-        const sk = `compra#${id_compra}`;
+        const pk = `USER#${id_usuario}`;
+        const sk = `CAR#${id_carrito}#BUY`;
 
         // Construir el objeto de compra que se va a insertar
         const compra = {
-            pk: { S: pk },
-            sk: { S: sk },
-            // Otros atributos de compra que puedas tener en el body
-            // Ejemplo:
-            // producto: { S: data.producto },
-            // cantidad: { N: data.cantidad.toString() },
-            // precio: { N: data.precio.toString() },
-            // fechaCompra: { S: new Date().toISOString() }
+            PK: pk,
+            SK: sk,
+            date: new Date().toISOString(),
+            GSIpk: id_compra,
+            price: data.price,
+            status: "pagado"
         };
 
         const command = new PutCommand({
-            TableName: stage + "_e-commerce_table", // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
+            TableName: `${stage}_e-commerce_table`,
             Item: compra,
         });
 
