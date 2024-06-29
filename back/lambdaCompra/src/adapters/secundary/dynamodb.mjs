@@ -11,14 +11,16 @@ export const listCompras = async (stage, body) => {
         const id_usuario = data.id_usuario;
         const id_carrito = data.id_carrito;
 
-        // Construir la clave de consulta
-        const pk = `usuario#${id_usuario}#carrito#${id_carrito}`;
+        // Construir las claves de consulta
+        const pk = `USER#${id_usuario}`;
+        const skPrefix = `CAR#${id_carrito}#BUY`;
 
         const command = new QueryCommand({
-            TableName: stage + "dev_e-commerce_table", // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
-            KeyConditionExpression: "pk = :pk",
+            TableName: stage + `_e-commerce_table`, // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
+            KeyConditionExpression: "PK = :pk AND begins_with(SK, :skPrefix)",
             ExpressionAttributeValues: {
                 ":pk": pk,
+                ":skPrefix": skPrefix,
             },
             ConsistentRead: true,
         });
@@ -46,14 +48,14 @@ export const getCompra = async (stage, id_compra, body) => {
         const id_carrito = data.id_carrito;
 
         // Construir las claves de consulta según tu estructura
-        const pk = `usuario#${id_usuario}#carrito#${id_carrito}`;
-        const sk = `compra#${id_compra}`;
+        const pk = `USER#${id_usuario}`;
+        const sk = `CAR#${id_carrito}`;
 
         const command = new GetCommand({
-            TableName: stage + "dev_e-commerce_table", // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
+            TableName: `${stage}_e-commerce_table`, // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
             Key: {
-                pk: { S: pk },
-                sk: { S: sk },
+                pk: pk,
+                sk: sk,
             },
         });
 
@@ -69,7 +71,7 @@ export const getCompra = async (stage, id_compra, body) => {
         console.error("Error en getCompra:", error);
         throw new Error("Error al obtener compra");
     }
-};
+}
 
 export const addCompra = async (stage, body) => {
     try {
@@ -96,7 +98,7 @@ export const addCompra = async (stage, body) => {
         };
 
         const command = new PutCommand({
-            TableName: stage + "dev_e-commerce_table", // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
+            TableName: stage + "_e-commerce_table", // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
             Item: compra,
         });
 

@@ -1,6 +1,10 @@
 import { getCarritoUC } from "../../domain/use_cases/uc_getCarrito.mjs";
 import { addCarritoUC } from "../../domain/use_cases/uc_addCarrito.mjs";
 import { updateCarritoUC } from "../../domain/use_cases/uc_updateCarrito.mjs";
+<<<<<<< HEAD
+=======
+import { deleteCarritoUC } from "../../domain/use_cases/uc_deleteCarrito.mjs";
+>>>>>>> 017e11f27332ffbc6bb729f4eec54a5951bbe51f
 
 export const apigtwAdapter = async (apigtwEvent, stage) =>{
 

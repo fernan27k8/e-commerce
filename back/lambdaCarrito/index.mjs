@@ -1,4 +1,3 @@
-import {apigtwAdapter} from "./src/adapters/primary/apigtwEvent.mjs"
 export const handler = async (event, context) => {
     let responseEvent = {};
   

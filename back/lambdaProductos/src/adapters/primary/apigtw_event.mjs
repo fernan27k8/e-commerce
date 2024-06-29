@@ -1,5 +1,6 @@
 import { getProductUC } from "../../domain/use_cases/uc_get_product.mjs";
 import { listProductsUC } from "../../domain/use_cases/uc_list_products.mjs";
+import { updateProductsUC } from "../../domain/use_cases/uc_put_product.mjs";
 
 export const apigtwAdapter = async (apigtwEvent, stage)  => {
     let response = {};
@@ -32,6 +33,14 @@ export const apigtwAdapter = async (apigtwEvent, stage)  => {
                 }
             }
             break;
+        case "PUT":
+            //actualizar cantidad de un producto
+            if(resource == '/producto'){
+                const body = apigtwEvent["body"]
+                console.log("handlerApigtwEvent::Body", body);
+                response = await updateProductsUC(stage, body) 
+            }
+        break;
     }
     return response;
 }
