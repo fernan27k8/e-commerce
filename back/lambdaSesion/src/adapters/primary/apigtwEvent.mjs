@@ -15,12 +15,11 @@ export const apigtwAdapter = async (apigtwEvent, stage) => {
     };
     return response;
   }
-
-  const body = JSON.parse(apigtwEvent["body"]);
-
+  const body = apigtwEvent["body"];
+  console.log("Body:",body)
   switch (resource) {
     case "/usuario/signUp":
-      response = await registerUser(body, stage);
+      response = await registerUser(stage, body);
       break;
 /*
     case "/usuario/logIn":

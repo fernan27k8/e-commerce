@@ -1,13 +1,14 @@
-import AWS from 'aws-sdk';
-const cognito = new AWS.CognitoIdentityServiceProvider();
+import { CognitoIdentityProviderClient, AdminCreateUserCommand, AdminSetUserPasswordCommand } from "@aws-sdk/client-cognito-identity-provider";
+
+const cognitoClient = new CognitoIdentityProviderClient({ region: "us-east-2" });
 const USER_POOL_ID = 'us-east-2_9sLQ1sgn8';
 
 export const createUser = async (body) => {
     const data = JSON.parse(body);
 
-    const params = {
+    const createUserParams = {
         UserPoolId: USER_POOL_ID,
-        Username: data.email, // Usar el correo electrónico como nombre de usuario
+        Username: data.email,
         UserAttributes: [
             {
                 Name: 'email',
@@ -22,16 +23,19 @@ export const createUser = async (body) => {
         MessageAction: 'SUPPRESS'
     };
 
+    const setPasswordParams = {
+        Password: data.password,
+        UserPoolId: USER_POOL_ID,
+        Username: data.email,
+        Permanent: true
+    };
+
     try {
-        await cognito.adminCreateUser(params).promise();
+        // Crear el usuario
+        await cognitoClient.send(new AdminCreateUserCommand(createUserParams));
 
         // Establecer la contraseña permanente para el usuario
-        const setPasswordParams = {
-            Password: data.password,
-            UserPoolId: USER_POOL_ID,
-            Username: data.email
-        };
-        await cognito.adminSetUserPassword(setPasswordParams).promise();
+        await cognitoClient.send(new AdminSetUserPasswordCommand(setPasswordParams));
 
         return {
             statusCode: 201,
