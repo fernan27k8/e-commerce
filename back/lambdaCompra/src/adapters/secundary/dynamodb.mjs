@@ -1,5 +1,6 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {QueryCommand, DynamoDBDocumentClient, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { v4 as uuidv4 } from 'uuid';
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -48,7 +49,7 @@ export const getCompra = async (stage, id_compra, body) => {
 
         // Construir las claves de consulta según tu estructura
         const pk = `USER#${id_usuario}`;
-        const sk = `CAR#${id_carrito}#BUY`;
+        const sk = `BUY#CAR#${id_carrito}`;
 
         const command = new GetCommand({
             TableName: `${stage}_e-commerce_table`, // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
@@ -78,11 +79,11 @@ export const addCompra = async (stage, body) => {
         const data = JSON.parse(body);
         const id_usuario = data.user_id;
         const id_carrito = data.car_id;
-        const id_compra = data.buy_id;
+        const id_compra = uuidv4();
 
         // Construir la clave de partición (pk) y de ordenación (sk)
         const pk = `USER#${id_usuario}`;
-        const sk = `CAR#${id_carrito}#BUY`;
+        const sk = `BUY#CAR#${id_carrito}`;
 
         // Construir el objeto de compra que se va a insertar
         const compra = {

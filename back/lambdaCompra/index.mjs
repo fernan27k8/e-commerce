@@ -25,6 +25,9 @@ export const handler = async (event, context) => {
         //Devolver la respuesta
         return {
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            },
             body: JSON.stringify(responseEvent),
         };
 
