@@ -1,5 +1,4 @@
-const { login, registerUser, logout } = require('../../domain/use_cases/uc_cognito.mjs'); 
-
+import { registerUser } from "../../domain/use_cases/uc_addUser.mjs";
 export const apigtwAdapter = async (apigtwEvent, stage) => {
   const headers = apigtwEvent["headers"];
   const xMytoken = headers["x-mytoken"];
@@ -23,7 +22,7 @@ export const apigtwAdapter = async (apigtwEvent, stage) => {
     case "/usuario/signUp":
       response = await registerUser(body, stage);
       break;
-
+/*
     case "/usuario/logIn":
       response = await login(body, stage);
       break;
@@ -31,7 +30,7 @@ export const apigtwAdapter = async (apigtwEvent, stage) => {
     case "/usuario/logOut":
       console.log("handleApigtwEvent::solicitud de cierre de sesión");
       response = await logout(xMytoken, stage);
-      break;
+      break;*/
 
     default:
       console.error("Recurso no compatible para POST:", resource);

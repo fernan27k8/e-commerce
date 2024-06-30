@@ -15,7 +15,7 @@ export const apigtwAdapter = async (apigtwEvent, stage)  => {
     switch(httpMethod){
         case "GET":
             //Conocer el estatus de la compra
-            if(resource == '/compra/{idCompra}'){
+            if(resource == '/compra/{id_compra}'){
                 console.log("Detalles de venta");
                 const pathParams = apigtwEvent["pathParameters"];
                 console.log("handleApigtwEvent::pathParams", pathParams);
