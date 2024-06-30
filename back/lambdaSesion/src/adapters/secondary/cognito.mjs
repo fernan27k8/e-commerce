@@ -1,85 +1,51 @@
-const AWS = require('aws-sdk');
-const cognitoIdentity = new AWS.CognitoIdentityServiceProvider();
+import AWS from 'aws-sdk';
+const cognito = new AWS.CognitoIdentityServiceProvider();
+const USER_POOL_ID = 'us-east-2_9sLQ1sgn8';
 
-module.exports = {
-  registerUser: async (userData) => {
+export const createUser = async (body) => {
+    const data = JSON.parse(body);
+
     const params = {
-      ClientId: process.env.COGNITO_USER_POOL_CLIENT_ID,
-      Password: userData.password,
-      Username: userData.username,
+        UserPoolId: USER_POOL_ID,
+        Username: data.email, // Usar el correo electrónico como nombre de usuario
+        UserAttributes: [
+            {
+                Name: 'email',
+                Value: data.email
+            },
+            {
+                Name: 'email_verified',
+                Value: 'true'
+            }
+        ],
+        TemporaryPassword: data.password,
+        MessageAction: 'SUPPRESS'
     };
 
     try {
-      const result = await cognitoIdentity.signUp(params).promise();
-      console.log('Usuario registrado correctamente:', result);
-      return result;
+        await cognito.adminCreateUser(params).promise();
+
+        // Establecer la contraseña permanente para el usuario
+        const setPasswordParams = {
+            Password: data.password,
+            UserPoolId: USER_POOL_ID,
+            Username: data.email
+        };
+        await cognito.adminSetUserPassword(setPasswordParams).promise();
+
+        return {
+            statusCode: 201,
+            body: JSON.stringify({
+                message: 'User created successfully'
+            })
+        };
     } catch (error) {
-      console.error('Error al registrar usuario:', error);
-      throw error;
+        return {
+            statusCode: 400,
+            body: JSON.stringify({
+                message: 'Error creating user',
+                error: error.message
+            })
+        };
     }
-  },
-
-  loginUser: async (loginData) => {
-    const params = {
-      ClientId: process.env.COGNITO_USER_POOL_CLIENT_ID,
-      Password: loginData.password,
-      Username: loginData.username,
-    };
-
-    try {
-      const result = await cognitoIdentity.initiateAuth(params).promise();
-      console.log('Usuario autenticado correctamente:', result);
-      return result;
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      throw error;
-    }
-  },
-
-  validateToken: async (token) => {
-    const params = {
-      AccessToken: token,
-    };
-
-    try {
-      const result = await cognitoIdentity.getUserInfo(params).promise();
-      console.log('Token validado correctamente:', result);
-      return result;
-    } catch (error) {
-      console.error('Error al validar token:', error);
-      throw error;
-    }
-  },
-
-  refreshAccessToken: async (refreshToken) => {
-    const params = {
-      ClientId: process.env.COGNITO_USER_POOL_CLIENT_ID,
-      RefreshToken: refreshToken,
-    };
-
-    try {
-      const result = await cognitoIdentity.refreshAccessToken(params).promise();
-      console.log('Token de acceso actualizado correctamente:', result);
-      return result;
-    } catch (error) {
-      console.error('Error al actualizar el token de acceso:', error);
-      throw error;
-    }
-  },
-
-  globalSignOut: async () => {
-    const params = {
-      ClientId: process.env.COGNITO_USER_POOL_CLIENT_ID,
-      GlobalSignOut: true,
-    };
-
-    try {
-      const result = await cognitoIdentity.globalSignOut(params).promise();
-      console.log('Cierre de sesión global realizado correctamente:', result);
-      return result;
-    } catch (error) {
-      console.error('Error al cerrar sesión globalmente:', error);
-      throw error;
-    }
-  },
 };
