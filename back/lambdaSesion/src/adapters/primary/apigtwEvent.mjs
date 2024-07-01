@@ -1,4 +1,5 @@
 import { registerUser } from "../../domain/use_cases/uc_addUser.mjs";
+import { logInUser } from "../../domain/use_cases/uc_logIn.mjs";
 export const apigtwAdapter = async (apigtwEvent, stage) => {
   const headers = apigtwEvent["headers"];
   const xMytoken = headers["x-mytoken"];
@@ -21,11 +22,10 @@ export const apigtwAdapter = async (apigtwEvent, stage) => {
     case "/usuario/signUp":
       response = await registerUser(stage, body);
       break;
-/*
     case "/usuario/logIn":
-      response = await login(body, stage);
+      response = await logInUser(stage,body);
       break;
-
+      /*
     case "/usuario/logOut":
       console.log("handleApigtwEvent::solicitud de cierre de sesión");
       response = await logout(xMytoken, stage);
