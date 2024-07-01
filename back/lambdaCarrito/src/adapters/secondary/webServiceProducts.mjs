@@ -11,8 +11,16 @@ export const productWebService = async (stage, idProduct) => {
 
     try {
         const response = await axios(config);
-        const amount = response.data.amount;
-        return amount;
+
+        // Asumimos que la respuesta contiene un array de objetos en data
+        const productData = response.data.find(item => item.SK === idProduct);
+
+        if (productData) {
+            const amount = productData.amount;
+            return amount;
+        } else {
+            throw new Error(`Producto con id ${idProduct} no encontrado.`);
+        }
     } catch (error) {
         throw new Error(JSON.stringify(error.response ? error.response.data : 'Error in productWebService'));
     }

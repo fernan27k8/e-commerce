@@ -3,11 +3,11 @@ import { productWebService } from "../../adapters/secondary/webServiceProducts.m
 
 export const addCarritoRepository = async (idUsuario, idCarrito, body, stage) => {
     let response = {};
-    requestBody = JSON.parse(body);
+    const requestBody = JSON.parse(body);
     try {
         // Llamada al web service para obtener la información del producto
-        const responseProduct = await productWebService(stage, requestBody.idProduct);
-
+        const responseProduct = await productWebService(stage, requestBody.idProducto);
+        console.log("Amount de Request:",requestBody.amount);
         if (responseProduct >= requestBody.amount) {
             // Agregar el producto al carrito
             response = await addCart(idUsuario, idCarrito, body, stage);
