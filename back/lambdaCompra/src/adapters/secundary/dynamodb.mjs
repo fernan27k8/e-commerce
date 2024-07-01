@@ -5,12 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
-export const listCompras = async (stage, body) => {
+export const listCompras = async (stage, id_usuario) => {
     try {
-        // Parsear el JSON del cuerpo de la solicitud
-        const data = JSON.parse(body);
-        const id_usuario = data.id_usuario;
-
         // Construir las claves de consulta
         const pk = `USER#${id_usuario}`;
         const skPrefix = `BUY#`;
@@ -40,12 +36,8 @@ export const listCompras = async (stage, body) => {
 }
 
 
-export const getCompra = async (stage, id_compra, body) => {
+export const getCompra = async (stage, id_usuario, id_carrito) => {
     try {
-        // Parsear el JSON del cuerpo de la solicitud
-        const data = JSON.parse(body);
-        const id_usuario = data.id_usuario;
-        const id_carrito = data.id_carrito;
 
         // Construir las claves de consulta según tu estructura
         const pk = `USER#${id_usuario}`;
@@ -73,12 +65,10 @@ export const getCompra = async (stage, id_compra, body) => {
     }
 }
 
-export const addCompra = async (stage, body) => {
+export const addCompra = async (stage, id_usuario, id_carrito, body) => {
     try {
         // Parsear el JSON del cuerpo de la solicitud
         const data = JSON.parse(body);
-        const id_usuario = data.user_id;
-        const id_carrito = data.car_id;
         const id_compra = uuidv4();
 
         // Construir la clave de partición (pk) y de ordenación (sk)

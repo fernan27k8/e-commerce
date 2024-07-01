@@ -1,9 +1,9 @@
 import { getCompra } from "../../adapters/secundary/dynamodb.mjs";
 
-export const getCompraRepository = async (stage, idCompra, body) => {
+export const getCompraRepository = async (stage, idUsuario, idCarrito) => {
     let response = {};
      
-    response = await getCompra(stage, idCompra, body);
+    response = await getCompra(stage, idUsuario, idCarrito);
 
     return response;
 }

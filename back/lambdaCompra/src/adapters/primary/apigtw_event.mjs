@@ -15,33 +15,41 @@ export const apigtwAdapter = async (apigtwEvent, stage)  => {
     switch(httpMethod){
         case "GET":
             //Conocer el estatus de la compra
-            if(resource == '/compra/{id_compra}'){
+            if(resource == '/compra/{id_usuario}/{id_carrito}'){
                 console.log("Detalles de venta");
                 const pathParams = apigtwEvent["pathParameters"];
                 console.log("handleApigtwEvent::pathParams", pathParams);
-                const idCompra = pathParams["id_compra"];
-                console.log("handleApigtwEvent::idCompra", idCompra);
-                const body = apigtwEvent["body"]
-                console.log("handlerApigtwEvent::Body", body);
-                if(idCompra != "" || idCompra != undefined){
-                    response = await getCompraUC(stage, idCompra, body);
+                const idUsuario = pathParams["id_usuario"];
+                console.log("handleApigtwEvent::idUsuario", idUsuario);
+                const idCarrito = pathParams["id_carrito"];
+                console.log("handleApigtwEvent::idCarrito", idCarrito);
+                if (idCarrito && idCarrito !== "") {
+                    response = await getCompraUC(stage, idUsuario, idCarrito);
                 }
             }
             //ver historial de compras de un usuario
-            else if(resource == '/compra'){
+            else if(resource == '/compra/{id_usuario}'){
                 console.log("Historial de compras");
-                const body = apigtwEvent["body"]
-                console.log("handlerApigtwEvent::Body", body);
-                response = await listComprasUC(stage, body)
+                const pathParams = apigtwEvent["pathParameters"];
+                console.log("handleApigtwEvent::pathParams", pathParams);
+                const idUsuario = pathParams["id_usuario"];
+                console.log("handleApigtwEvent::idUsuario", idUsuario);
+                response = await listComprasUC(stage, idUsuario)
             }
             break;
         case "POST":
             //confirmar una compra
-            if(resource == '/compra'){
+            if(resource == '/compra/{id_usuario}/{id_carrito}'){
                 console.log("Confirmar compra");
+                const pathParams = apigtwEvent["pathParameters"];
+                console.log("handleApigtwEvent::pathParams", pathParams);
+                const idUsuario = pathParams["id_usuario"];
+                console.log("handleApigtwEvent::idUsuario", idUsuario);
+                const idCarrito = pathParams["id_carrito"];
+                console.log("handleApigtwEvent::idCarrito", idCarrito);
                 const body = apigtwEvent["body"]
                 console.log("handlerApigtwEvent::Body", body);
-                response = await addCompraUC(stage, body);
+                response = await addCompraUC(stage, idUsuario, idCarrito, body);
                     
             }
     }
