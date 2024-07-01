@@ -14,11 +14,14 @@ export const handler = async (event, context) => {
       responseEvent = "Evento no reconocido";
     }
   
-    const response ={
+    //Devolver la respuesta
+    return {
       statusCode: 200,
+      headers: {
+          'Access-Control-Allow-Origin': '*'
+      },
       body: JSON.stringify(responseEvent),
     };
-    return response;
   }
   
   export const getStage = async(context) =>{

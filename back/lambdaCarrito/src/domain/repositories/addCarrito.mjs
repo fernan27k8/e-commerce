@@ -3,23 +3,23 @@ import { productWebService } from "../../adapters/secondary/webServiceProducts.m
 
 export const addCarritoRepository = async (idUsuario, idCarrito, body, stage) => {
     let response = {};
-
+    requestBody = JSON.parse(body);
     try {
         // Llamada al web service para obtener la información del producto
-        const responseProduct = await productWebService(stage, body);
+        const responseProduct = await productWebService(stage, requestBody.idProduct);
 
-        if (responseProduct.status === "SUCCESS") {
+        if (responseProduct >= requestBody.amount) {
             // Agregar el producto al carrito
-            response = await addCart(idUsuario, idCarrito, JSON.stringify(responseProduct.data), stage);
+            response = await addCart(idUsuario, idCarrito, body, stage);
         } else {
             response = {
-                statusCode: 400,
-                body: JSON.stringify({ message: responseProduct.message || "Web service error" }),
+                status: "ERROR",
+                body: JSON.stringify({ message: "Productos insuficientes" }),
             };
         }
     } catch (error) {
         response = {
-            statusCode: 500,
+            status: "ERROR",
             body: JSON.stringify({ message: error.message || "Error in addCarritoRepository" }),
         };
     }
