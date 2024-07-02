@@ -8,7 +8,10 @@ import { v4 as uuidv4 } from 'uuid';
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 
-export const getUser = async (idusuario, stage) => {
+export const getUser = async (idToken, stage) => {
+  const decodedToken = jwk.decode(idToken);
+  const idusuario = decodedToken.username;
+
   const command = {
     TableName: stage + "_e-commerce_table",
     Key: {
@@ -52,24 +55,3 @@ export const addUser = async (bodyI,bodyA,stage) => {
     return { statusCode: 500, body: JSON.stringify({ message: "Error al crear usuario" }) };
   }
 };
-
-export const getUserInfo = async (idToken,stage)=> {
-  try {
-      // Decodificar el token para obtener información del usuario
-      const decodedToken = jwk.decode(idToken); // Implementar esta función según tus necesidades
-
-      // Usar el Username (u otro identificador único) para buscar información en DynamoDB
-      const userId = decodedToken.username; // Suponiendo que el username es el identificador en DynamoDB
-      const params = new ScanCommand({
-          TableName: stage + "_e-commerce_table",
-          Key: {
-              userId: userId
-          }
-      });
-      const data = await docClient.send(params);
-      return data.Item.idCarrito; // Devuelve los datos del usuario encontrados en DynamoDB
-  } catch (error) {
-      console.error('Error al obtener información del usuario desde DynamoDB:', error);
-      return null; // Manejar el error apropiadamente según tus necesidades
-  }
-}

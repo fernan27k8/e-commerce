@@ -1,5 +1,5 @@
 import { CognitoIdentityProviderClient, AdminCreateUserCommand, AdminSetUserPasswordCommand, InitiateAuthCommand} from "@aws-sdk/client-cognito-identity-provider";
-import {getUserInfo} from "../secondary/dynamodb.mjs"
+import { getUserInfo } from "../secondary/dynamodb.mjs"
 const cognitoClient = new CognitoIdentityProviderClient({ region: "us-east-2" });
 const USER_POOL_ID = 'us-east-2_vUuuGCj2W';
 const COGNITO_USER_POOL_CLIENT_ID = `6e4puvndqb2kirmv9fpnu0ujq`;
