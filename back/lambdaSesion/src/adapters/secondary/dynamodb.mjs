@@ -10,18 +10,21 @@ const docClient = DynamoDBDocumentClient.from(client);
 
 export const getUser = async (idToken, stage) => {
   const decodedToken = jwk.decode(idToken);
-  const idusuario = decodedToken.username;
+  console.log("Info Token",decodedToken);
+  const idUsuario = decodedToken.sub;
+  console.log("idUsuario:",idUsuario);
 
   const command = {
     TableName: stage + "_e-commerce_table",
     Key: {
-      pk: "USER",
-      sk: idusuario,
+      PK: "USER",
+      SK: idUsuario,
     },
   };
 
   try {
     const response = await docClient.send(new GetCommand(command));
+    console.log("Informacion User",response);
     if ("Item" in response) {
       return { statusCode: 200, body: JSON.stringify(response.Item) };
     } else {

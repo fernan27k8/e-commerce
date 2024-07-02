@@ -1,5 +1,6 @@
 import { registerUser } from "../../domain/use_cases/uc_addUser.mjs";
 import { logInUser } from "../../domain/use_cases/uc_logIn.mjs";
+import { logOutUser } from "../../domain/use_cases/uc_logOut.mjs";
 export const apigtwAdapter = async (apigtwEvent, stage) => {
   const headers = apigtwEvent["headers"];
   const xMytoken = headers["x-mytoken"];
@@ -25,11 +26,16 @@ export const apigtwAdapter = async (apigtwEvent, stage) => {
     case "/usuario/logIn":
       response = await logInUser(stage,body);
       break;
-      /*
     case "/usuario/logOut":
+      const headers = apigtwEvent["headers"];
+      console.log("handleApigtwEvent::headers",headers);
+      const xMytoken = headers["xMytoken"];
+      console.log("handleApigtwEvent::x-mytoken", xMytoken);
+      const refreshToken = headers["refreshToken"];
+      console.log("handleApigtwEvent::refreshToken", refreshToken);
       console.log("handleApigtwEvent::solicitud de cierre de sesión");
-      response = await logout(xMytoken, stage);
-      break;*/
+      response = await logOutUser(stage, xMytoken, refreshToken);
+      break;
 
     default:
       console.error("Recurso no compatible para POST:", resource);

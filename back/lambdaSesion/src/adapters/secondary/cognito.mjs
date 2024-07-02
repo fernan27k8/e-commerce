@@ -1,5 +1,5 @@
 import { CognitoIdentityProviderClient, AdminCreateUserCommand, AdminSetUserPasswordCommand, InitiateAuthCommand} from "@aws-sdk/client-cognito-identity-provider";
-import { getUserInfo } from "../secondary/dynamodb.mjs"
+import { getUser } from "../secondary/dynamodb.mjs"
 const cognitoClient = new CognitoIdentityProviderClient({ region: "us-east-2" });
 const USER_POOL_ID = 'us-east-2_vUuuGCj2W';
 const COGNITO_USER_POOL_CLIENT_ID = `6e4puvndqb2kirmv9fpnu0ujq`;
@@ -84,7 +84,7 @@ export const logIn = async (body, stage) => {
         const refreshToken = authResult.AuthenticationResult.RefreshToken;
 
         // Obtener información adicional del usuario desde DynamoDB
-        const userInfo = await getUserInfo(idToken,stage);
+        const userInfo = await getUser(idToken,stage);
 
         // Construir la respuesta con la información del usuario
         const response = {
@@ -129,6 +129,37 @@ export const logIn = async (body, stage) => {
         };
     }
 };
+
+export const logOut = async(xMytoken,refreshToken) => { // xMytoken podría ser el identificador de usuario o el token de acceso
+    try {
+    
+      const authParams = {
+        AuthFlow: 'REFRESH_TOKEN_AUTH',
+        ClientId: COGNITO_USER_POOL_CLIENT_ID,
+        AuthParameters: {
+          'USERNAME': xMytoken, // Puedes usar el identificador de usuario si lo tienes
+          'REFRESH_TOKEN': refreshToken
+        }
+      };
+  
+      await cognitoClient.send(new InitiateAuthCommand(authParams));
+  
+      console.log("Usuario desconectado con éxito");
+  
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ message: "Sesión cerrada con éxito" }),
+      };
+    } catch (error) {
+      console.error("Error durante el cierre de sesión:", error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: "Error al cerrar sesión" }),
+      };
+    }
+  }
+  
+  
 
   
 
