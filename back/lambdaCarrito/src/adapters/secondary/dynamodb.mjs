@@ -1,5 +1,5 @@
 import {DynamoDBClient, PutItemCommand, UpdateItemCommand} from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand, ScanCommand, GetCommand, DeleteCommand, UpdateCommand} from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, ScanCommand} from "@aws-sdk/lib-dynamodb";
 import { createRequire } from 'module'
 
 const require = createRequire(import.meta.url);

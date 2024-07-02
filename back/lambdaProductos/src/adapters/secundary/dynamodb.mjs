@@ -38,7 +38,7 @@ export const getProduct = async (idProduct, stage) =>{
     const response = await docClient.send(command);
     console.log("QueryProducts", response);
     if(response["Count"] > 0 ){
-        return response["Items"];
+        return response.Items[0];
     }
     return "Sin datos";
 }
