@@ -1,14 +1,19 @@
 import {updateCart} from "../../adapters/secondary/dynamodb.mjs"
+import { productWebService } from "../../adapters/secondary/webServiceProducts.mjs";
 export const updateCarritoRepository = async(idUsuario,idCarrito,body,stage) =>{
     let response = {};
-    requestBody = JSON.parse(body);
+    const requestBody = JSON.parse(body);
     try {
         // Llamada al web service para obtener la información del producto
-        const responseProduct = await productWebService(stage, requestBody.idProduct);
-
-        if (responseProduct >= requestBody.amount) {
-            // Modificar l acantidad en el carrito
-            response = await updateCart(idUsuario, idCarrito, body, stage);
+        const responseProduct = await productWebService(stage, requestBody.idProducto);
+        let amountProduct = Number(responseProduct.amount);
+        let amountReq = Number(requestBody.amount);
+        let priceProduct = Number(responseProduct.price);
+        let price = priceProduct * amountReq;
+        console.log("amountProduct: ",amountProduct);
+        if (amountProduct >= amountReq) {
+            // Agregar el producto al carrito
+            response = await updateCart(idUsuario, idCarrito, body, price, stage);
         } else {
             response = {
                 status: "ERROR",
@@ -18,7 +23,7 @@ export const updateCarritoRepository = async(idUsuario,idCarrito,body,stage) =>{
     } catch (error) {
         response = {
             status: "ERROR",
-            body: JSON.stringify({ message: error.message || "Error in updateCarritoRepository" }),
+            body: JSON.stringify({ message: error.message || "Error in addCarritoRepository" }),
         };
     }
 
