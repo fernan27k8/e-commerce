@@ -7,8 +7,11 @@ export const addCarritoRepository = async (idUsuario, idCarrito, body, stage) =>
     try {
         // Llamada al web service para obtener la información del producto
         const responseProduct = await productWebService(stage, requestBody.idProducto);
-        console.log("AmountProduct",responseProduct)
-        if (responseProduct >= requestBody.amount) {
+        amountProduct = Number(responseProduct.amount);
+        amountReq = Number(requestBody.amount);
+        console.log("AmountReq:",amountReq);
+        console.log("amountProduct: ",amountProduct);
+        if (amountProduct >= amountReq) {
             // Agregar el producto al carrito
             response = await addCart(idUsuario, idCarrito, body, stage);
         } else {

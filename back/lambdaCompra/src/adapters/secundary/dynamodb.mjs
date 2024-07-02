@@ -9,14 +9,13 @@ export const listCompras = async (stage, id_usuario) => {
     try {
         // Construir las claves de consulta
         const pk = `USER#${id_usuario}`;
-        const skPrefix = `BUY#`;
+        const skSuffix = `BUY`;
 
         const command = new QueryCommand({
-            TableName: stage + `_e-commerce_table`, // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
-            KeyConditionExpression: "PK = :pk AND begins_with(SK, :skPrefix)",
+            TableName: `${stage}_e-commerce_table`, // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
+            KeyConditionExpression: "PK = :pk",
             ExpressionAttributeValues: {
-                ":pk": pk,
-                ":skPrefix": skPrefix,
+                ":pk": pk
             },
             ConsistentRead: true,
         });
@@ -25,7 +24,12 @@ export const listCompras = async (stage, id_usuario) => {
         console.log("listCompras response:", response);
 
         if (response.Items && response.Items.length > 0) {
-            return response.Items;
+            // Filtrar elementos cuyo SK termine con el valor deseado
+            const filteredItems = response.Items.filter(item => 
+                item.SK.endsWith(skSuffix)
+            );
+
+            return filteredItems.length > 0 ? filteredItems : "Sin datos";
         } else {
             return "Sin datos";
         }
@@ -33,29 +37,29 @@ export const listCompras = async (stage, id_usuario) => {
         console.error("Error en listCompras:", error);
         throw new Error("Error al listar compras");
     }
-}
+};
 
 
 export const getCompra = async (stage, id_usuario, id_carrito) => {
     try {
-
         // Construir las claves de consulta según tu estructura
         const pk = `USER#${id_usuario}`;
-        const sk = `BUY#CAR#${id_carrito}`;
+        const skPrefix = `CAR#${id_carrito}`;
 
-        const command = new GetCommand({
+        const command = new QueryCommand({
             TableName: `${stage}_e-commerce_table`, // Asegúrate de tener el nombre correcto de tu tabla con el sufijo de stage
-            Key: {
-                PK: pk,
-                SK: sk,
+            KeyConditionExpression: "PK = :pk AND begins_with(SK, :skPrefix)",
+            ExpressionAttributeValues: {
+                ":pk": pk,
+                ":skPrefix": skPrefix,
             },
         });
 
         const response = await docClient.send(command);
         console.log("getCompra response:", response);
 
-        if (response.Item) {
-            return response.Item;
+        if (response.Items && response.Items.length > 0) {
+            return response.Items;
         } else {
             return "Compra no encontrada";
         }
