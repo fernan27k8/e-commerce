@@ -141,7 +141,7 @@ export const logOut = async(xMytoken,refreshToken) => { // xMytoken podría ser 
           'REFRESH_TOKEN': refreshToken
         }
       };
-  
+      console.log("Parametros de autenticacion:",authParams);
       await cognitoClient.send(new InitiateAuthCommand(authParams));
   
       console.log("Usuario desconectado con éxito");

@@ -3,7 +3,7 @@ import { logInUser } from "../../domain/use_cases/uc_logIn.mjs";
 import { logOutUser } from "../../domain/use_cases/uc_logOut.mjs";
 export const apigtwAdapter = async (apigtwEvent, stage) => {
   const headers = apigtwEvent["headers"];
-  const xMytoken = headers["x-mytoken"];
+  const xMytoken = headers["xmytoken"];
   const httpMethod = apigtwEvent["httpMethod"];
   const resource = apigtwEvent["resource"];
 
@@ -29,9 +29,7 @@ export const apigtwAdapter = async (apigtwEvent, stage) => {
     case "/usuario/logOut":
       const headers = apigtwEvent["headers"];
       console.log("handleApigtwEvent::headers",headers);
-      const xMytoken = headers["xMytoken"];
-      console.log("handleApigtwEvent::x-mytoken", xMytoken);
-      const refreshToken = headers["refreshToken"];
+      const refreshToken = headers["refreshtoken"];
       console.log("handleApigtwEvent::refreshToken", refreshToken);
       console.log("handleApigtwEvent::solicitud de cierre de sesión");
       response = await logOutUser(stage, xMytoken, refreshToken);
