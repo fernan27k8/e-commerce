@@ -1,6 +1,7 @@
 import { getCarritoUC } from "../../domain/use_cases/uc_getCarrito.mjs";
 import { addCarritoUC } from "../../domain/use_cases/uc_addCarrito.mjs";
 import { updateCarritoUC } from "../../domain/use_cases/uc_updateCarrito.mjs";
+import{CognitoJwtVerifier} from "aws-jwt-verify";
 
 export const apigtwAdapter = async (apigtwEvent, stage) =>{
 
@@ -12,12 +13,18 @@ export const apigtwAdapter = async (apigtwEvent, stage) =>{
 
     const xMytoken = headers["x-mytoken"];
     console.log("handleApigtwEvent::x-mytoken", xMytoken);
-
+    const verifiedToken = await verifyToken(xMytoken);
+    if (verifiedToken === "Token not valid") {
+        return {
+            statusCode: 401,
+            body: JSON.stringify({ message: "Unauthorized" }),
+        };
+    }
     const httpMethod = apigtwEvent["httpMethod"];
     const resource = apigtwEvent["resource"];
 
     switch(httpMethod){
-        case "GET":
+        case "GET":            
             if (resource == '/carrito/{id_usuario}/{id_carrito}'){
                 const pathParams = apigtwEvent["pathParameters"];
                 console.log("handleApigtwEvent::pathParams",pathParams);
@@ -66,3 +73,20 @@ export const apigtwAdapter = async (apigtwEvent, stage) =>{
     }
     return response;
 }
+
+export const verifyToken = async(token) => {
+    const verifier = CognitoJwtVerifier.create({
+      userPoolId: "us-east-2_vUuuGCj2W",
+      tokenUse: "id",
+      clientId: "16e4puvndqb2kirmv9fpnu0ujq",
+    });
+  
+    try {
+      const response = await verifier.verify(token);
+      console.log("Token is valid. Response", response);
+      return response;
+    } catch (error) {
+      console.error("Token not valid:", error);
+      return "Token not valid";
+    }
+  }

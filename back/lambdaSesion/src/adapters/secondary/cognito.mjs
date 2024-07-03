@@ -97,7 +97,7 @@ export const logIn = async (body, stage) => {
                 userInfo: userInfo || {} // Incluir información del usuario si está disponible
             })
         };
-
+        console.log("Retorna toda la informacion:",response);
         return response;
     } catch (error) {
         console.error('Error en la autenticación:', error);

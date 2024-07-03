@@ -26,7 +26,11 @@ export const getUser = async (idToken, stage) => {
     const response = await docClient.send(new GetCommand(command));
     console.log("Informacion User",response);
     if ("Item" in response) {
-      return { statusCode: 200, body: JSON.stringify(response.Item) };
+      const responseInf = {
+        idUsuario :response.Item.SK,
+        idCarrito :response.Item.GSIpk
+      }
+      return { statusCode: 200, body: JSON.stringify(responseInf) };
     } else {
       return { statusCode: 404, body: JSON.stringify({ message: "Usuario no encontrado" }) };
     }
