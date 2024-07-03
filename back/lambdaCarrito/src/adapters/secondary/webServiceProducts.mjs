@@ -9,6 +9,7 @@ export const productWebService = async (stage, idProduct) => {
     },
   };
 
+  console.log(idProduct);
     try {
         const response = await axios(config);
         const data = response.data; 

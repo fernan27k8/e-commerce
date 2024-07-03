@@ -1,6 +1,7 @@
 import { addCompraUC } from "../../domain/use_cases/uc_add_compra.mjs";
 import { getCompraUC } from "../../domain/use_cases/uc_get_compra.mjs";
 import { listComprasUC } from "../../domain/use_cases/uc_list_compra.mjs";
+import {CognitoJwtVerifier} from "aws-jwt-verify";
 
 export const apigtwAdapter = async (apigtwEvent, stage)  => {
     let response = {};
@@ -9,8 +10,8 @@ export const apigtwAdapter = async (apigtwEvent, stage)  => {
     const headers = apigtwEvent["headers"];
     console.log("handler::headers", headers)
 
-    const xMytoken = headers["x-mytoken"];
-    console.log("handleApigtwEvent::x-mytoken", xMytoken);
+    const xMytoken = headers["xmytoken"];
+    console.log("handleApigtwEvent::xmytoken", xMytoken);
     const verifiedToken = await verifyToken(xMytoken);
     if (verifiedToken === "Token not valid") {
         return {
@@ -58,7 +59,7 @@ export const apigtwAdapter = async (apigtwEvent, stage)  => {
                 console.log("handleApigtwEvent::idCarrito", idCarrito);
                 const body = apigtwEvent["body"]
                 console.log("handlerApigtwEvent::Body", body);
-                response = await addCompraUC(stage, idUsuario, idCarrito, body);
+                response = await addCompraUC(stage, idUsuario, idCarrito, body, xMytoken);
                     
             }
     }
@@ -69,7 +70,7 @@ export const verifyToken = async(token) => {
     const verifier = CognitoJwtVerifier.create({
       userPoolId: "us-east-2_vUuuGCj2W",
       tokenUse: "id",
-      clientId: "16e4puvndqb2kirmv9fpnu0ujq",
+      clientId: "6e4puvndqb2kirmv9fpnu0ujq",
     });
   
     try {

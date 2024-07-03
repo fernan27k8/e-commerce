@@ -2,6 +2,7 @@ import { addCart } from "../../adapters/secondary/dynamodb.mjs";
 import { productWebService } from "../../adapters/secondary/webServiceProducts.mjs";
 
 export const addCarritoRepository = async (idUsuario, idCarrito, body, stage) => {
+    
     let response = {};
     const requestBody = JSON.parse(body);
     try {
@@ -11,8 +12,10 @@ export const addCarritoRepository = async (idUsuario, idCarrito, body, stage) =>
         const amountReq = Number(requestBody.amount);
         console.log("AmountReq:",amountReq);
         console.log("amountProduct: ",amountProduct);
+        const price = amountProduct * Number(responseProduct.price);
         if (amountProduct >= amountReq) {
             // Agregar el producto al carrito
+            console.log("llegue");
             response = await addCart(idUsuario, idCarrito, body, price, stage);
         } else {
             response = {

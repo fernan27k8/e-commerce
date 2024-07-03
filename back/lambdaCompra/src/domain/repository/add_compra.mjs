@@ -2,7 +2,7 @@ import { addCompra, createCar } from "../../adapters/secundary/dynamodb.mjs";
 import { paymentWebService } from "../../adapters/secundary/webServicePayment.mjs";
 import { productWebService } from "../../adapters/secundary/webServiceProducts.mjs";
 
-export const addCompraRepository = async (stage, id_usuario, id_carrito, body) => {
+export const addCompraRepository = async (stage, id_usuario, id_carrito, body, xMytoken) => {
     let responseBuy = {};
     let responseStock = {};
     let GenResponse = {};
@@ -16,7 +16,7 @@ export const addCompraRepository = async (stage, id_usuario, id_carrito, body) =
             responseBuy = await addCompra(stage, id_usuario, id_carrito, body);
             console.log("Compra realizada exitosamente");
             //Se restan los productos del stock
-            responseStock = await productWebService(body);
+            responseStock = await productWebService(body, xMytoken, stage);
             console.log("Productos extraidos...")
             //Se genera un nuevo carrito para el ususario
             const newCar = await createCar(stage, id_usuario);
