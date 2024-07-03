@@ -13,7 +13,7 @@ export const addCarritoRepository = async (idUsuario, idCarrito, body, stage) =>
         console.log("amountProduct: ",amountProduct);
         if (amountProduct >= amountReq) {
             // Agregar el producto al carrito
-            response = await addCart(idUsuario, idCarrito, body, stage);
+            response = await addCart(idUsuario, idCarrito, body, price, stage);
         } else {
             response = {
                 status: "ERROR",

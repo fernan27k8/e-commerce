@@ -1,5 +1,5 @@
-import {DynamoDBClient, PutItemCommand, UpdateItemCommand} from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand} from "@aws-sdk/lib-dynamodb";
+import {DynamoDBClient} from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, PutCommand, ScanCommand, UpdateCommand} from "@aws-sdk/lib-dynamodb";
 import { createRequire } from 'module'
 
 const require = createRequire(import.meta.url);
@@ -29,50 +29,50 @@ const docClient = DynamoDBDocumentClient.from(client);
         return response.Items; 
       };
 
-      export const addCart = async (idUsuario, idCarrito, body, stage) => {
-        const data = JSON.parse(body);
-        const idProducto = data.idProducto; 
+      export const addCart = async (idUsuario, idCarrito, body, price, stage) => {
+        console.log("llegue");
+        const data = JSON.parse(body)
         const amount = data.amount; 
-        const price = data.price;
+        const idProducto = data.idProducto;
         const pk = `USER#${idUsuario}`;
         const sk = `CAR#${idCarrito}#PRODUCT#${idProducto}`;
-    
-        const command = new PutItemCommand({
+        const command = new PutCommand({
             TableName: `${stage}_e-commerce_table`,
             Item: {
-                PK: { S: pk },
-                SK: { S: sk },
-                idProducto: { S: idProducto },
-                amount: { N: amount.toString() },
-                price: { N: price.toString() },
+                PK: pk ,
+                SK: sk ,
+                idProducto: idProducto ,
+                amount: amount,
+                price: price,
             },
             ConditionExpression: "attribute_not_exists(PK) AND attribute_not_exists(SK)"
         });
-    
+
         try {
             const response = await docClient.send(command);
             console.log("Producto agregado al carrito:", response);
-            return response;
+            return { message: "Producto añadido correctamente" };
         } catch (error) {
             console.error("Error al agregar producto al carrito:", error);
             throw new Error(JSON.stringify(error) || "Error en addCart");
         }
     };
 
-    export const updateCart = async (idUsuario, idCarrito, body, stage) => {
+    export const updateCart = async (idUsuario, idCarrito, body, price, stage) => {
       const data = JSON.parse(body);
       const pk = `USER#${idUsuario}`;
       const sk = `CAR#${idCarrito}#PRODUCT#${data.idProducto}`;
   
-      const command = new UpdateItemCommand({
+      const command = new UpdateCommand({
           TableName: `${stage}_e-commerce_table`,
           Key: {
-              PK: { S: pk },
-              SK: { S: sk }
+              PK: pk ,
+              SK: sk 
           },
-          UpdateExpression: "SET amount = :newAmount",
+          UpdateExpression: "SET amount = :newAmount, price = :newPrice",
           ExpressionAttributeValues: {
-              ":newAmount": data.amount
+              ":newAmount": data.amount,
+              ":newPrice": price
           },
           ConditionExpression: "attribute_exists(PK) AND attribute_exists(SK)",
           ReturnValues: "UPDATED_NEW"
@@ -81,7 +81,7 @@ const docClient = DynamoDBDocumentClient.from(client);
       try {
           const response = await docClient.send(command);
           console.log("Cantidad del producto actualizada en el carrito:", response);
-          return response;
+          return { message: "Producto editado correctamente" };;
       } catch (error) {
           console.error("Error al actualizar la cantidad del producto en el carrito:", error);
           throw new Error(JSON.stringify(error) || "Error en updateCartProductAmount");

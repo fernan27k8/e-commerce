@@ -1,5 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import {QueryCommand, DynamoDBDocumentClient, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import {QueryCommand, DynamoDBDocumentClient, GetCommand, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { v4 as uuidv4 } from 'uuid';
 
 const client = new DynamoDBClient({});
@@ -100,5 +100,50 @@ export const addCompra = async (stage, id_usuario, id_carrito, body) => {
     } catch (error) {
         console.error("Error en addCompra:", error);
         throw new Error("Error al añadir compra");
+    }
+};
+
+
+export const createCar = async (stage, id_usuario) => {
+    const newCarrito = uuidv4();
+
+    // Construir la clave de partición (pk) y de ordenación (sk)
+    const pk = `USER`;
+    const sk = id_usuario;
+
+    // Consultar el usuario en la tabla
+    const queryCommand = new QueryCommand({
+        TableName: `${stage}_e-commerce_table`,
+        KeyConditionExpression: "PK = :pk AND SK = :sk",
+        ExpressionAttributeValues: {
+            ":pk": pk,
+            ":sk": sk,
+        },
+    });
+
+    try {
+        const { Items } = await client.send(queryCommand);
+
+        if (Items.length > 0) {
+            // El usuario existe, actualizar el GSIpk con el newCarrito
+            const updateCommand = new UpdateCommand({
+                TableName: `${stage}_e-commerce_table`,
+                Key: {
+                    PK: pk ,
+                    SK: sk ,
+                },
+                UpdateExpression: "SET GSIpk = :newCarrito",
+                ExpressionAttributeValues: {
+                    ":newCarrito": newCarrito ,
+                },
+            });
+
+            await client.send(updateCommand);
+            return newCarrito;
+        } else {
+            console.log("Usuario no encontrado");
+        }
+    } catch (error) {
+        console.error("Error al actualizar el carrito del usuario:", error);
     }
 };

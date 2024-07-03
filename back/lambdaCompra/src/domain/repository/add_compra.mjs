@@ -1,4 +1,4 @@
-import { addCompra } from "../../adapters/secundary/dynamodb.mjs";
+import { addCompra, createCar } from "../../adapters/secundary/dynamodb.mjs";
 import { paymentWebService } from "../../adapters/secundary/webServicePayment.mjs";
 import { productWebService } from "../../adapters/secundary/webServiceProducts.mjs";
 
@@ -18,7 +18,10 @@ export const addCompraRepository = async (stage, id_usuario, id_carrito, body) =
             //Se restan los productos del stock
             responseStock = await productWebService(body);
             console.log("Productos extraidos...")
-            GenResponse = { status: 'SUCCESS', message: "Proceso exitoso" };
+            //Se genera un nuevo carrito para el ususario
+            const newCar = await createCar(stage, id_usuario);
+            console.log("Carrito creado...", newCar);
+            GenResponse = { status: 'SUCCESS', message: "Proceso exitoso", Car: newCar };
         } else {
             GenResponse = paymentResponse;
         }
