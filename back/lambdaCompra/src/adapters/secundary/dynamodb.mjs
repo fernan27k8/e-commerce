@@ -77,7 +77,7 @@ export const addCompra = async (stage, id_usuario, id_carrito, body) => {
 
         // Construir la clave de partición (pk) y de ordenación (sk)
         const pk = `USER#${id_usuario}`;
-        const sk = `BUY#CAR#${id_carrito}`;
+        const sk = `CAR#${id_carrito}#BUY`;
 
         // Construir el objeto de compra que se va a insertar
         const compra = {
@@ -106,6 +106,9 @@ export const addCompra = async (stage, id_usuario, id_carrito, body) => {
 
 export const createCar = async (stage, id_usuario) => {
     const newCarrito = uuidv4();
+
+    console.log("id usuario: ", id_usuario);
+    console.log("newCarrito: ", newCarrito);
 
     // Construir la clave de partición (pk) y de ordenación (sk)
     const pk = `USER`;
