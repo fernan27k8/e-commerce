@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-export const productWebService = async (stage, idProduct) => {
+export const productWebService = async (stage, idProduct,xMytoken) => {
   const config = {
     method: 'GET',
     url: `https://yfcyqimbv1.execute-api.us-east-2.amazonaws.com/${stage}/producto/${idProduct}`,
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${xMytoken}`
     },
   };
 

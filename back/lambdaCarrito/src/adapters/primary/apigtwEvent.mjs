@@ -10,9 +10,10 @@ export const apigtwAdapter = async (apigtwEvent, stage) =>{
     console.log("handleApigtwEvent::headers",headers);
 
     let response = {};
-
-    const xMytoken = headers["x-mytoken"];
-    console.log("handleApigtwEvent::x-mytoken", xMytoken);
+    
+    const xMytoken = headers["xmytoken"];
+    console.log("handleApigtwEvent::xmytoken", xMytoken);
+    
     const verifiedToken = await verifyToken(xMytoken);
     if (verifiedToken === "Token not valid") {
         return {
@@ -20,6 +21,7 @@ export const apigtwAdapter = async (apigtwEvent, stage) =>{
             body: JSON.stringify({ message: "Unauthorized" }),
         };
     }
+        
     const httpMethod = apigtwEvent["httpMethod"];
     const resource = apigtwEvent["resource"];
 
@@ -78,7 +80,7 @@ export const verifyToken = async(token) => {
     const verifier = CognitoJwtVerifier.create({
       userPoolId: "us-east-2_vUuuGCj2W",
       tokenUse: "id",
-      clientId: "16e4puvndqb2kirmv9fpnu0ujq",
+      clientId: "6e4puvndqb2kirmv9fpnu0ujq",
     });
   
     try {
